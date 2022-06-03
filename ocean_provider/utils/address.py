@@ -35,7 +35,7 @@ def get_contract_address(
 
 def get_provider_fee_token(chain_id):
     fee_token = os.environ.get("PROVIDER_FEE_TOKEN", get_ocean_address(chain_id))
-    return fee_token if fee_token else BLACK_HOLE_ADDRESS
+    return fee_token or BLACK_HOLE_ADDRESS
 
 
 def get_ocean_address(chain_id):

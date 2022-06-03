@@ -23,20 +23,20 @@ from tests.test_helpers import get_first_service_by_type
 
 @pytest.mark.unit
 def test_invalid_request_name():
-    req = dict()
+    req = {}
     with pytest.raises(RequestNotFound) as err:
         RBACValidator(request_name="MyRequest", request=req)
     assert err.value.args[0] == "Request name is not valid!"
 
 
-encrypt_endpoint = BaseURLs.SERVICES_URL + "/encrypt"
+encrypt_endpoint = f"{BaseURLs.SERVICES_URL}/encrypt"
 
 
 @pytest.mark.unit
 def test_encrypt_request_payload(consumer_wallet, publisher_wallet, monkeypatch):
     monkeypatch.setenv("PRIVATE_PROVIDER", "1")
     document = {
-        "url": "http://localhost:8030" + encrypt_endpoint,
+        "url": f"http://localhost:8030{encrypt_endpoint}",
         "index": 0,
         "checksum": "foo_checksum",
         "contentLength": "4535431",
@@ -44,6 +44,7 @@ def test_encrypt_request_payload(consumer_wallet, publisher_wallet, monkeypatch)
         "encoding": "UTF-8",
         "compression": "zip",
     }
+
     req = {
         "document": json.dumps(document),
         "publisherAddress": publisher_wallet.address,

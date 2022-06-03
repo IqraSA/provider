@@ -198,15 +198,14 @@ def verify_order_tx(
     logger.debug(
         f"verify_order_tx: service timeout = {service.timeout}, timestamp delta = {timestamp_delta}"
     )
-    if service.timeout != 0:
-        if timestamp_delta > service.timeout:
-            raise ValueError(
-                f"The order has expired. \n"
-                f"current timestamp={timestamp_now}\n"
-                f"order timestamp={log_timestamp}\n"
-                f"timestamp delta={timestamp_delta}\n"
-                f"service timeout={service.timeout}"
-            )
+    if service.timeout != 0 and timestamp_delta > service.timeout:
+        raise ValueError(
+            f"The order has expired. \n"
+            f"current timestamp={timestamp_now}\n"
+            f"order timestamp={log_timestamp}\n"
+            f"timestamp delta={timestamp_delta}\n"
+            f"service timeout={service.timeout}"
+        )
 
     if sender not in [order_log.args.consumer, order_log.args.payer]:
         raise ValueError("sender of order transaction is not the consumer/payer.")

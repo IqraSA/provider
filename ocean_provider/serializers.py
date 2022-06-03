@@ -26,13 +26,6 @@ class StageAlgoSerializer:
         algorithm_did = self.algo_data.get("documentId")
         algorithm_tx_id = self.algo_data.get("transferTxId")
 
-        dict_template = {
-            "id": None,
-            "rawcode": None,
-            "container": None,
-            "algouserdata": None,
-        }
-
         if algorithm_meta and isinstance(algorithm_meta, str):
             algorithm_meta = json.loads(algorithm_meta)
 
@@ -46,14 +39,18 @@ class StageAlgoSerializer:
                 }
             )
 
-        dict_template["id"] = algorithm_did
-        dict_template["rawcode"] = ""
-        dict_template["container"] = self.algo_asset.metadata["algorithm"]["container"]
-        dict_template["remote"] = {
-            "serviceEndpoint": self.algo_service.service_endpoint,
-            "txId": algorithm_tx_id,
-            "serviceId": self.algo_service.id,
-            "userData": self.algo_data.get("algouserdata", None),
+        dict_template = {
+            "algouserdata": None,
+            "id": algorithm_did,
+            "rawcode": "",
+            "container": self.algo_asset.metadata["algorithm"]["container"],
+            "remote": {
+                "serviceEndpoint": self.algo_service.service_endpoint,
+                "txId": algorithm_tx_id,
+                "serviceId": self.algo_service.id,
+                "userData": self.algo_data.get("algouserdata", None),
+            },
         }
+
         dict_template["algoCustomData"] = self.algo_data.get("algocustomdata", None)
         return dict(dict_template)

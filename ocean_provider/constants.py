@@ -14,6 +14,8 @@ class ConfigSections:
     RESOURCES = "resources"
 
 
+
+
 class BaseURLs:
     """
     This class stores values for:
@@ -25,7 +27,8 @@ class BaseURLs:
 
     BASE_PROVIDER_URL = "/api"
     SWAGGER_URL = "/api/docs"  # URL for exposing Swagger UI (without trailing '/')
-    SERVICES_URL = BASE_PROVIDER_URL + "/services"
+    SERVICES_URL = f"{BASE_PROVIDER_URL}/services"
+
 
 
 class Metadata:

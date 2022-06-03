@@ -349,9 +349,8 @@ class InputItemValidator:
             self.error = "Services in input with compute type must be in the same provider you are calling."
             return False
 
-        if self.service.type == "compute":
-            if not self.validate_algo():
-                return False
+        if self.service.type == "compute" and not self.validate_algo():
+            return False
 
         self.validated_inputs = {
             "index": self.index,
@@ -362,8 +361,7 @@ class InputItemValidator:
             },
         }
 
-        userdata = self.data.get("userdata")
-        if userdata:
+        if userdata := self.data.get("userdata"):
             self.validated_inputs["remote"]["userdata"] = userdata
 
         return self.validate_usage() if self.check_usage else True

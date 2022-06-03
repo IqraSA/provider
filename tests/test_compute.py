@@ -209,7 +209,7 @@ def test_compute(client, publisher_wallet, consumer_wallet, free_c2d_env):
         }
     )
 
-    compute_endpoint = BaseURLs.SERVICES_URL + "/compute"
+    compute_endpoint = f"{BaseURLs.SERVICES_URL}/compute"
     job_info = get_compute_job_info(client, compute_endpoint, payload)
     assert job_info, f"Failed to get job info for jobId {job_id}"
     print(f"got info for compute job {job_id}: {job_info}")
@@ -249,7 +249,7 @@ def test_compute(client, publisher_wallet, consumer_wallet, free_c2d_env):
         job_info = get_compute_job_info(client, compute_endpoint, payload)
         if job_info["dateFinished"] and float(job_info["dateFinished"]) > 0:
             break
-        tries = tries + 1
+        tries += 1
         time.sleep(5)
 
     assert tries <= 200, "Timeout waiting for the job to be completed"
@@ -262,8 +262,12 @@ def test_compute(client, publisher_wallet, consumer_wallet, free_c2d_env):
 
     payload["nonce"] = str(datetime.utcnow().timestamp())
     result_without_signature = get_compute_result(
-        client, BaseURLs.SERVICES_URL + "/computeResult", payload, raw_response=True
+        client,
+        f"{BaseURLs.SERVICES_URL}/computeResult",
+        payload,
+        raw_response=True,
     )
+
     assert result_without_signature.status_code == 400
     assert (
         result_without_signature.json["errors"]["signature"][0]
@@ -274,8 +278,9 @@ def test_compute(client, publisher_wallet, consumer_wallet, free_c2d_env):
     payload["signature"] = signature
     payload["nonce"] = nonce
     result_data = get_compute_result(
-        client, BaseURLs.SERVICES_URL + "/computeResult", payload
+        client, f"{BaseURLs.SERVICES_URL}/computeResult", payload
     )
+
     assert result_data is not None, "We should have a result"
 
 
@@ -331,7 +336,11 @@ def test_compute_allow_all_published(
 
     # Start the compute job
     payload = {
-        "dataset": {"documentId": ddo.did, "serviceId": sa.id, "transferTxId": tx_id},
+        "dataset": {
+            "documentId": ddo.did,
+            "serviceId": sa.id,
+            "transferTxId": tx_id,
+        },
         "algorithm": {
             "serviceId": sa_compute.id,
             "documentId": alg_ddo.did,
@@ -340,10 +349,10 @@ def test_compute_allow_all_published(
         "signature": signature,
         "nonce": nonce,
         "consumerAddress": consumer_wallet.address,
+        "environment": "some inexistent env",
     }
 
-    # Start the compute job on a bad environment
-    payload["environment"] = "some inexistent env"
+
     response = post_to_compute(client, payload)
 
     assert (
@@ -479,7 +488,7 @@ def test_compute_delete_job(
     assert response.status == "200 OK", f"start compute job failed: {response.data}"
 
     job_id = response.json[0]["jobId"]
-    compute_endpoint = BaseURLs.SERVICES_URL + "/compute"
+    compute_endpoint = f"{BaseURLs.SERVICES_URL}/compute"
     nonce, signature = get_compute_signature(client, consumer_wallet, ddo.did, job_id)
 
     query_string = {
@@ -509,7 +518,7 @@ def test_compute_delete_job(
 
 @pytest.mark.unit
 def test_compute_environments(client):
-    compute_envs_endpoint = BaseURLs.SERVICES_URL + "/computeEnvironments"
+    compute_envs_endpoint = f"{BaseURLs.SERVICES_URL}/computeEnvironments"
     response = client.get(compute_envs_endpoint)
     for env in response.json:
         if env["priceMin"] == 0:

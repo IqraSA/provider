@@ -60,7 +60,7 @@ def test_invalid_endpoint(client, caplog):
 
 @pytest.mark.unit
 def test_empty_payload_encryption(client):
-    encrypt_endpoint = BaseURLs.SERVICES_URL + "/encrypt"
+    encrypt_endpoint = f"{BaseURLs.SERVICES_URL}/encrypt"
     publish = client.post(encrypt_endpoint, data=None, content_type="application/json")
     assert publish.status_code == 400
 
@@ -80,7 +80,7 @@ def test_encrypt_endpoint(client, provider_wallet, publisher_wallet):
         "document": files_list_str,
         "publisherAddress": provider_wallet.address,
     }
-    encrypt_endpoint = BaseURLs.SERVICES_URL + "/encrypt"
+    encrypt_endpoint = f"{BaseURLs.SERVICES_URL}/encrypt"
     response = client.post(
         encrypt_endpoint, json=payload, content_type="application/octet-stream"
     )
@@ -95,13 +95,15 @@ def test_get_nonce(client, publisher_wallet):
     # Ensure address exists in database
     update_nonce(address, datetime.utcnow().timestamp())
 
-    endpoint = BaseURLs.SERVICES_URL + "/nonce"
+    endpoint = f"{BaseURLs.SERVICES_URL}/nonce"
     response = client.get(
-        endpoint + "?" + f"&userAddress={address}", content_type="application/json"
+        f"{endpoint}?" + f"&userAddress={address}",
+        content_type="application/json",
     )
+
     assert (
         response.status_code == 200 and response.data
     ), f"get nonce endpoint failed: response status {response.status}, data {response.data}"
 
-    value = response.json if response.json else json.loads(response.data)
+    value = response.json or json.loads(response.data)
     assert value["nonce"] == get_nonce(address)

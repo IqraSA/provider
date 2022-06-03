@@ -192,7 +192,7 @@ def test_initialize_compute_works(client, publisher_wallet, consumer_wallet):
     sa_compute = get_first_service_by_type(alg_ddo, ServiceType.ACCESS)
 
     response = client.post(
-        BaseURLs.SERVICES_URL + "/initializeCompute",
+        f"{BaseURLs.SERVICES_URL}/initializeCompute",
         data=json.dumps(
             {
                 "datasets": [
@@ -202,7 +202,10 @@ def test_initialize_compute_works(client, publisher_wallet, consumer_wallet):
                         "userdata": '{"dummy_userdata":"XXX", "age":12}',
                     }
                 ],
-                "algorithm": {"documentId": alg_ddo.did, "serviceId": sa_compute.id},
+                "algorithm": {
+                    "documentId": alg_ddo.did,
+                    "serviceId": sa_compute.id,
+                },
                 "consumerAddress": consumer_wallet.address,
                 "compute": {
                     "env": environments[0]["id"],
@@ -212,6 +215,7 @@ def test_initialize_compute_works(client, publisher_wallet, consumer_wallet):
         ),
         content_type="application/json",
     )
+
 
     assert response.status_code == 200, f"{response.data}"
     assert "datatoken" in response.json["datasets"][0]
@@ -282,10 +286,11 @@ def test_initialize_compute_order_reused(
     }
 
     response = client.post(
-        BaseURLs.SERVICES_URL + "/initializeCompute",
+        f"{BaseURLs.SERVICES_URL}/initializeCompute",
         data=json.dumps(payload),
         content_type="application/json",
     )
+
 
     # Case 1: valid orders, valid provider fees
     assert response.status_code == 200
@@ -301,10 +306,11 @@ def test_initialize_compute_order_reused(
     timeout = time.time() + (30 * 4)
     while True:
         response = client.post(
-            BaseURLs.SERVICES_URL + "/initializeCompute",
+            f"{BaseURLs.SERVICES_URL}/initializeCompute",
             data=json.dumps(payload),
             content_type="application/json",
         )
+
         if "providerFee" in response.json["algorithm"] or time.time() > timeout:
             break
         time.sleep(1)
@@ -319,10 +325,11 @@ def test_initialize_compute_order_reused(
     # Sleep long enough for orders to expire
     while True:
         response = client.post(
-            BaseURLs.SERVICES_URL + "/initializeCompute",
+            f"{BaseURLs.SERVICES_URL}/initializeCompute",
             data=json.dumps(payload),
             content_type="application/json",
         )
+
         if "validOrder" not in response.json["algorithm"] or time.time() > timeout:
             break
         time.sleep(1)
@@ -339,10 +346,11 @@ def test_initialize_compute_order_reused(
     # Case 4: wrong tx id for dataset order
     payload["datasets"][0]["transferTxId"] = "wrong_tx_id"
     response = client.post(
-        BaseURLs.SERVICES_URL + "/initializeCompute",
+        f"{BaseURLs.SERVICES_URL}/initializeCompute",
         data=json.dumps(payload),
         content_type="application/json",
     )
+
 
     assert response.status_code == 200
     assert "datatoken" in response.json["datasets"][0].keys()

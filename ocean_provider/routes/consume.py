@@ -110,7 +110,7 @@ def fileinfo():
     for i, url in enumerate(url_list):
         valid, details = check_url_details(url, with_checksum=with_checksum)
         info = {"index": i, "valid": valid}
-        info.update(details)
+        info |= details
         files_info.append(info)
 
     response = jsonify(files_info), 200
@@ -170,7 +170,6 @@ def initialize():
             logger,
         )
 
-    valid_order = None
     if "transferTxId" in data:
         try:
             _tx, _order_log, _ = validate_order(
@@ -204,7 +203,7 @@ def initialize():
         "providerFee": get_provider_fees(did, service, consumer_address, 0),
     }
 
-    if valid_order:
+    if valid_order := None:
         approve_params["validOrder"] = valid_order
 
     response = jsonify(approve_params), 200

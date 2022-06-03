@@ -84,11 +84,9 @@ def validate_dns_records(domain, records, record_type):
     if records is None:
         return True
 
-    for record in records:
-        if not validate_dns_record(record, domain, record_type):
-            return False
-
-    return True
+    return all(
+        validate_dns_record(record, domain, record_type) for record in records
+    )
 
 
 def validate_dns_record(record, domain, record_type):
@@ -161,7 +159,7 @@ def check_url_details(url, with_checksum=False):
                 }
 
                 if extra_data:
-                    details.update(extra_data)
+                    details |= extra_data
 
                 return True, details
     except requests.exceptions.RequestException:

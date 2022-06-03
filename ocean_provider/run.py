@@ -82,8 +82,7 @@ def get_services_endpoints():
 
 def get_provider_address():
     """Gets the provider wallet address."""
-    provider_address = get_provider_wallet().address
-    return provider_address
+    return get_provider_wallet().address
 
 
 def get_version():
@@ -104,10 +103,7 @@ def version():
         the existing endpoints from routes.py.
     """
     logger.info("root endpoint called")
-    info = dict()
-    info["software"] = Metadata.TITLE
-    info["version"] = get_version()
-
+    info = {"software": Metadata.TITLE, "version": get_version()}
     chain_id = app.config.get("chain_id")
     if not chain_id:
         logger.debug("get chain_id from node")
@@ -137,9 +133,10 @@ def spec():
 # Call factory function to create our blueprint
 swaggerui_blueprint = get_swaggerui_blueprint(
     BaseURLs.SWAGGER_URL,
-    provider_url + "/spec",
-    config={"app_name": "Test application"},  # Swagger UI config overrides
+    f"{provider_url}/spec",
+    config={"app_name": "Test application"},
 )
+
 
 # Register blueprint at URL
 app.register_blueprint(swaggerui_blueprint, url_prefix=BaseURLs.SWAGGER_URL)

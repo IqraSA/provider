@@ -56,7 +56,7 @@ def test_download_service(
             '{"surname":"XXX", "age":12}' if userdata == "valid" else "cannotdecode"
         )
 
-    download_endpoint = BaseURLs.SERVICES_URL + "/download"
+    download_endpoint = f"{BaseURLs.SERVICES_URL}/download"
     # Consume using url index and signature (withOUT nonce), should fail
     payload["signature"] = sign_message(asset.did, consumer_wallet)
     print(">>>> Expecting request error from the download endpoint <<<<")
@@ -116,7 +116,7 @@ def test_download_timeout(client, publisher_wallet, consumer_wallet, web3, timeo
         "fileIndex": 0,
     }
 
-    download_endpoint = BaseURLs.SERVICES_URL + "/download"
+    download_endpoint = f"{BaseURLs.SERVICES_URL}/download"
 
     # Consume using url index and signature (with nonce)
     nonce = str(datetime.utcnow().timestamp())
@@ -137,8 +137,11 @@ def test_download_timeout(client, publisher_wallet, consumer_wallet, web3, timeo
 @pytest.mark.unit
 def test_empty_payload(client):
     consume = client.get(
-        BaseURLs.SERVICES_URL + "/download", data=None, content_type="application/json"
+        f"{BaseURLs.SERVICES_URL}/download",
+        data=None,
+        content_type="application/json",
     )
+
     assert consume.status_code == 400
 
 
@@ -174,7 +177,7 @@ def test_download_multiple_files(client, publisher_wallet, consumer_wallet, web3
         "fileIndex": 0,
         "nonce": nonce,
     }
-    download_endpoint = BaseURLs.SERVICES_URL + "/download"
+    download_endpoint = f"{BaseURLs.SERVICES_URL}/download"
     response = client.get(download_endpoint, query_string=payload)
     assert response.status_code == 200, f"{response.data}"
 
@@ -183,7 +186,7 @@ def test_download_multiple_files(client, publisher_wallet, consumer_wallet, web3
     payload["signature"] = sign_message(_msg, consumer_wallet)
     payload["fileIndex"] = 1
     payload["nonce"] = nonce
-    download_endpoint = BaseURLs.SERVICES_URL + "/download"
+    download_endpoint = f"{BaseURLs.SERVICES_URL}/download"
     response = client.get(download_endpoint, query_string=payload)
     assert response.status_code == 200, f"{response.data}"
 
@@ -192,7 +195,7 @@ def test_download_multiple_files(client, publisher_wallet, consumer_wallet, web3
     payload["signature"] = sign_message(_msg, consumer_wallet)
     payload["fileIndex"] = 2
     payload["nonce"] = nonce
-    download_endpoint = BaseURLs.SERVICES_URL + "/download"
+    download_endpoint = f"{BaseURLs.SERVICES_URL}/download"
     response = client.get(download_endpoint, query_string=payload)
     assert response.status_code == 200, f"{response.data}"
 

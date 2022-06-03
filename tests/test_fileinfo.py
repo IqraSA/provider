@@ -12,7 +12,7 @@ from tests.test_helpers import (
     get_registered_asset,
 )
 
-fileinfo_url = BaseURLs.SERVICES_URL + "/fileinfo"
+fileinfo_url = f"{BaseURLs.SERVICES_URL}/fileinfo"
 
 
 @pytest.mark.integration
