@@ -155,8 +155,10 @@ def get_provider_fees_or_remote(
     else:
         # delegate to different provider
         response = requests.get(
-            service.service_endpoint + "/api/services/initialize", params=dataset
+            f"{service.service_endpoint}/api/services/initialize",
+            params=dataset,
         )
+
 
         result = response.json()
 

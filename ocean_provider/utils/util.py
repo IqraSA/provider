@@ -30,7 +30,7 @@ keys = KeyAPI(NativeECCBackend)
 
 def get_request_data(request):
     try:
-        return request.args if request.args else request.json
+        return request.args or request.json
     except werkzeug.exceptions.BadRequest:
         return {}
 

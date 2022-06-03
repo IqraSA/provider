@@ -189,10 +189,11 @@ def test_encrypt_and_decrypt_with_only_encryption(
 
     # Encrypt DDO
     encrypt_response = client.post(
-        BaseURLs.SERVICES_URL + "/encrypt",
+        f"{BaseURLs.SERVICES_URL}/encrypt",
         data=ddo_string,
         content_type="application/octet-stream",
     )
+
     # Interpret response.data as utf-8 encoded HexStr
     encrypted_ddo = encrypt_response.data.decode("utf-8")
     assert encrypted_ddo.startswith("0x")
@@ -275,10 +276,11 @@ def test_encrypt_and_decrypt_with_compression_and_encryption(
 
     # Encrypt DDO
     encrypt_response = client.post(
-        BaseURLs.SERVICES_URL + "/encrypt",
+        f"{BaseURLs.SERVICES_URL}/encrypt",
         data=ddo_compressed,
         content_type="application/octet-stream",
     )
+
     encrypted_ddo = encrypt_response.data.decode("utf-8")
     assert encrypted_ddo.startswith("0x")
     assert encrypt_response.status_code == 201
@@ -339,7 +341,7 @@ def decrypt_ddo_using_transaction_id(
     )
     signature = sign_message(message_to_be_signed, decrypter_wallet)
     return client.post(
-        BaseURLs.SERVICES_URL + "/decrypt",
+        f"{BaseURLs.SERVICES_URL}/decrypt",
         json={
             "decrypterAddress": decrypter_wallet.address,
             "chainId": chain_id,
@@ -366,7 +368,7 @@ def decrypt_ddo_using_decrypt_args(
     )
     signature = sign_message(message_to_be_signed, decrypter_wallet)
     return client.post(
-        BaseURLs.SERVICES_URL + "/decrypt",
+        f"{BaseURLs.SERVICES_URL}/decrypt",
         json={
             "decrypterAddress": decrypter_wallet.address,
             "chainId": chain_id,

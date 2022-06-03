@@ -63,7 +63,7 @@ def normalize_and_validate_unit(
 ) -> Decimal:
     """Returns an amount in ether, encoded as a Decimal
     Takes Decimal, str, or int as input. Purposefully does not support float."""
-    if isinstance(amount, str) or isinstance(amount, int):
+    if isinstance(amount, (str, int)):
         amount = Decimal(amount)
 
     if abs(amount) > Decimal(MAX_WEI).scaleb(

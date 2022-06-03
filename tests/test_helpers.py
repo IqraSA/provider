@@ -68,8 +68,7 @@ def deploy_contract(w3, _json, private_key, *args):
     tx_hash = w3.eth.send_raw_transaction(raw_tx)
     time.sleep(3)
     try:
-        address = w3.eth.get_transaction_receipt(tx_hash)["contractAddress"]
-        return address
+        return w3.eth.get_transaction_receipt(tx_hash)["contractAddress"]
     except Exception:
         print(f"tx not found: {tx_hash.hex()}")
         raise
@@ -183,7 +182,7 @@ def get_registered_asset(
         from_wallet=from_wallet,
     )
 
-    template_index = 1 if not erc20_enterprise else 2
+    template_index = 2 if erc20_enterprise else 1
     datatoken_address = deploy_datatoken(
         web3=web3,
         data_nft_address=data_nft_address,
@@ -213,23 +212,23 @@ def get_registered_asset(
         Web3.toHex(text=encrypted_files_str), get_provider_wallet()
     )
 
-    credentials = (
-        build_credentials_dict() if not custom_credentials else custom_credentials
-    )
+    credentials = custom_credentials or build_credentials_dict()
 
     chain_id = 8996
     did = compute_did_from_data_nft_address_and_chain_id(data_nft_address, chain_id)
-    metadata = (
-        build_metadata_dict_type_dataset() if not custom_metadata else custom_metadata
-    )
-    service_endpoint = (
-        "http://172.15.0.4:8030"
-        if not custom_service_endpoint
-        else custom_service_endpoint
-    )
+    metadata = custom_metadata or build_metadata_dict_type_dataset()
+    service_endpoint = custom_service_endpoint or "http://172.15.0.4:8030"
 
     services = (
-        [
+        build_custom_services(
+            custom_services,
+            from_wallet,
+            datatoken_address,
+            custom_services_args,
+            timeout,
+        )
+        if custom_services
+        else [
             build_service_dict_type_access(
                 datatoken_address=datatoken_address,
                 service_endpoint=service_endpoint,
@@ -237,15 +236,8 @@ def get_registered_asset(
                 timeout=timeout,
             )
         ]
-        if not custom_services
-        else build_custom_services(
-            custom_services,
-            from_wallet,
-            datatoken_address,
-            custom_services_args,
-            timeout,
-        )
     )
+
 
     ddo = build_ddo_dict(
         did=did,
@@ -301,15 +293,14 @@ def set_metadata(
 
 
 def get_dataset_ddo_with_multiple_files(client, wallet):
-    ufl = []
-    for _ in range(3):
-        ufl.append(
-            {
-                "type": "url",
-                "method": "GET",
-                "url": "https://raw.githubusercontent.com/tbertinmahieux/MSongsDB/master/Tasks_Demos/CoverSongs/shs_dataset_test.txt",
-            }
-        )
+    ufl = [
+        {
+            "type": "url",
+            "method": "GET",
+            "url": "https://raw.githubusercontent.com/tbertinmahieux/MSongsDB/master/Tasks_Demos/CoverSongs/shs_dataset_test.txt",
+        }
+        for _ in range(3)
+    ]
 
     return get_registered_asset(wallet, unencrypted_files_list=ufl)
 
@@ -404,10 +395,7 @@ def initialize_service(
     if reuse_order:
         payload["transferTxId"] = reuse_order
 
-    response = client.get(
-        BaseURLs.SERVICES_URL + "/initialize",
-        json=payload,
-    )
+    response = client.get(f"{BaseURLs.SERVICES_URL}/initialize", json=payload)
 
     if raw_response:
         return response

@@ -28,7 +28,7 @@ def get_nonce(address):
     """
     if os.getenv("REDIS_CONNECTION"):
         result = cache.get(address)
-        return result if result else None
+        return result or None
 
     result = models.UserNonce.query.filter_by(address=address).first()
 

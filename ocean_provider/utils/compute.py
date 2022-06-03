@@ -28,8 +28,7 @@ def process_compute_request(data):
     did = data.get("documentId")
     owner = data.get("consumerAddress")
     job_id = data.get("jobId")
-    body = dict()
-    body["providerAddress"] = provider_wallet.address
+    body = {"providerAddress": provider_wallet.address}
     if owner is not None:
         body["owner"] = owner
     if job_id is not None:

@@ -142,8 +142,8 @@ def get_compute_service(
     trusted_publishers=None,
     timeout=3600,
 ):
-    trusted_algos = [] if not trusted_algos else trusted_algos
-    trusted_publishers = [] if not trusted_publishers else trusted_publishers
+    trusted_algos = trusted_algos or []
+    trusted_publishers = trusted_publishers or []
     compute_service_attributes = {
         "namespace": "test",
         "allowRawAlgorithm": True,

@@ -16,7 +16,7 @@ from tests.test_helpers import get_resource_path
 def test_asset_credentials_addresses_both():
     """Tests asset credentials when both deny and allow lists exist on the asset."""
     sample_asset_path = get_resource_path("ddo", "ddo_sa_sample_with_credentials.json")
-    assert sample_asset_path.exists(), "{} does not exist!".format(sample_asset_path)
+    assert sample_asset_path.exists(), f"{sample_asset_path} does not exist!"
 
     ddo = deepcopy(json_dict)
     asset = Asset(ddo)
@@ -39,7 +39,7 @@ def test_asset_credentials_addresses_both():
 def test_asset_credentials_addresses_only_deny():
     """Tests asset credentials when only the deny list exists on the asset."""
     sample_asset_path = get_resource_path("ddo", "ddo_sa_sample_with_credentials.json")
-    assert sample_asset_path.exists(), "{} does not exist!".format(sample_asset_path)
+    assert sample_asset_path.exists(), f"{sample_asset_path} does not exist!"
 
     ddo = deepcopy(json_dict)
     asset = Asset(ddo)
@@ -68,7 +68,7 @@ def test_asset_credentials_addresses_only_deny():
 def test_asset_credentials_addresses_no_access_list():
     """Tests asset credentials when neither deny, nor allow lists exist on the asset."""
     sample_asset_path = get_resource_path("ddo", "ddo_sa_sample_with_credentials.json")
-    assert sample_asset_path.exists(), "{} does not exist!".format(sample_asset_path)
+    assert sample_asset_path.exists(), f"{sample_asset_path} does not exist!"
 
     ddo = deepcopy(json_dict)
     asset = Asset(ddo)

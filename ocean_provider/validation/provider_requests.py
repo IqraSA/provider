@@ -29,7 +29,7 @@ class CustomJsonRequest(JsonRequest):
         request = request or flask_request
         request = get_request_data(request)
         class_name = self.__class__.__name__
-        self._validators = list()
+        self._validators = []
         action_mapping = RBACValidator.get_action_mapping()
         if os.getenv("RBAC_SERVER_URL") and class_name in action_mapping.keys():
             self._validators.append(
@@ -160,11 +160,7 @@ class CustomRulesProcessor(RulesProcessor):
             f"chain_id={chain_id}, nonce={nonce}."
         )
 
-        if transaction_id:
-            first_arg = transaction_id
-        else:
-            first_arg = data_nft_address
-
+        first_arg = transaction_id or data_nft_address
         original_msg = f"{first_arg}{decrypter_address}{chain_id}"
 
         try:

@@ -29,9 +29,9 @@ def verify_signature(signer_address, signature, original_msg, nonce):
     message = f"{original_msg}{str(nonce)}"
     signature_bytes = Web3.toBytes(hexstr=signature)
     if signature_bytes[64] == 27:
-        new_signature = b"".join([signature_bytes[0:64], b"\x00"])
+        new_signature = b"".join([signature_bytes[:64], b"\x00"])
     elif signature_bytes[64] == 28:
-        new_signature = b"".join([signature_bytes[0:64], b"\x01"])
+        new_signature = b"".join([signature_bytes[:64], b"\x01"])
     else:
         new_signature = signature_bytes
 
@@ -93,6 +93,4 @@ def sign_message(message, wallet):
     r = str(Web3.toHex(Web3.toBytes(signed.r).rjust(32, b"\0")))
     s = str(Web3.toHex(Web3.toBytes(signed.s).rjust(32, b"\0")))
 
-    signature = "0x" + r[2:] + s[2:] + v[2:]
-
-    return signature
+    return f"0x{r[2:]}{s[2:]}{v[2:]}"

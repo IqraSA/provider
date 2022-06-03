@@ -14,9 +14,9 @@ STRIPPED_URL_MSG = "<URL stripped for security reasons>"
 
 def error_response(err_str: str, status: int, custom_logger=None):
     """Logs error and returns an error response."""
-    err_str = strip_and_replace_urls(str(err_str))
+    err_str = strip_and_replace_urls(err_str)
 
-    this_logger = custom_logger if custom_logger else logger
+    this_logger = custom_logger or logger
     this_logger.error(err_str, exc_info=1)
     response = make_response(jsonify(error=err_str), status)
     response.headers["Connection"] = "close"

@@ -136,7 +136,7 @@ def get_compute_signature(client, consumer_wallet, did, job_id=None):
 
 
 def post_to_compute(client, payload):
-    compute_endpoint = BaseURLs.SERVICES_URL + "/compute"
+    compute_endpoint = f"{BaseURLs.SERVICES_URL}/compute"
     return client.post(
         compute_endpoint, data=json.dumps(payload), content_type="application/json"
     )
@@ -159,15 +159,16 @@ def get_possible_compute_job_status_text():
 
 def get_compute_job_info(client, endpoint, params):
     response = client.get(
-        endpoint + "?" + "&".join([f"{k}={v}" for k, v in params.items()]),
+        f"{endpoint}?" + "&".join([f"{k}={v}" for k, v in params.items()]),
         data=json.dumps(params),
         content_type="application/json",
     )
+
     assert (
         response.status_code == 200 and response.data
     ), f"get compute job info failed: status {response.status}, data {response.data}"
 
-    job_info = response.json if response.json else json.loads(response.data)
+    job_info = response.json or json.loads(response.data)
     if not job_info:
         print(f"There is a problem with the job info response: {response.data}")
         return None, None
@@ -179,8 +180,9 @@ def get_compute_result(client, endpoint, params, raw_response=False):
     # not possible to use PrepparedRequest here,
     # since we don't have the full url (schema, host) in the tests
     response = client.get(
-        endpoint + "?" + "&".join([f"{k}={v}" for k, v in params.items()])
+        f"{endpoint}?" + "&".join([f"{k}={v}" for k, v in params.items()])
     )
+
 
     if raw_response:
         return response
@@ -194,5 +196,5 @@ def get_compute_result(client, endpoint, params, raw_response=False):
 
 def get_future_valid_until(short=False):
     # return a timestamp for one hour in the future or 30s in the future if short
-    time_diff = timedelta(hours=1) if not short else timedelta(seconds=30)
+    time_diff = timedelta(seconds=30) if short else timedelta(hours=1)
     return int((datetime.utcnow() + time_diff).timestamp())

@@ -95,9 +95,8 @@ class Config(configparser.ConfigParser):
             with open(filename) as fp:
                 text = fp.read()
                 self.read_string(text)
-        else:
-            if "text" in kwargs:
-                self.read_string(kwargs["text"])
+        elif "text" in kwargs:
+            self.read_string(kwargs["text"])
 
         if options_dict:
             self._logger.info(f"Config: loading from dict {options_dict}")
@@ -114,8 +113,9 @@ class Config(configparser.ConfigParser):
 
     @property
     def address_file(self):
-        file_path = self.get(self._section_name, NAME_ADDRESS_FILE, fallback=None)
-        if file_path:
+        if file_path := self.get(
+            self._section_name, NAME_ADDRESS_FILE, fallback=None
+        ):
             return Path(file_path).expanduser().resolve()
 
         return Path(contract_addresses.__file__).expanduser().resolve()
@@ -153,7 +153,7 @@ class Config(configparser.ConfigParser):
         fallback = "ocean-provider.db"
         result = self.get("resources", NAME_STORAGE_PATH, fallback=fallback)
 
-        return result if result else fallback
+        return result or fallback
 
     @property
     def authorized_decrypters(self):

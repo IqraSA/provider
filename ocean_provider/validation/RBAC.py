@@ -90,17 +90,17 @@ class RBACValidator:
         }
         # builds actions like build_encrtyptUrl_payload to update the dictionary
         # with request - specific key-values.
-        payload.update(getattr(self, f"build_{self.action}_payload")())
+        payload |= getattr(self, f"build_{self.action}_payload")()
         return payload
 
     def build_encryptUrl_payload(self):
-        message = "encryptUrl" + json.dumps(self.credentials)
+        message = f"encryptUrl{json.dumps(self.credentials)}"
         signature = sign_message(message, get_provider_wallet())
 
         return {"signature": signature}
 
     def build_initialize_payload(self):
-        message = "initialize" + json.dumps(self.credentials)
+        message = f"initialize{json.dumps(self.credentials)}"
         signature = sign_message(message, get_provider_wallet())
         return {
             "signature": signature,
@@ -108,7 +108,7 @@ class RBACValidator:
         }
 
     def build_access_payload(self):
-        message = "access" + json.dumps(self.credentials)
+        message = f"access{json.dumps(self.credentials)}"
         signature = sign_message(message, get_provider_wallet())
         return {"signature": signature, "dids": self.get_dids()}
 
